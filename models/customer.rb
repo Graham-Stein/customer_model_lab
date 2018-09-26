@@ -29,17 +29,27 @@ class Customer
     result = SqlRunner.run(sql, values)
     id = result[0]["id"].to_i
     @id = id
-
   end
 
 
   def self.delete_all()
-
     sql = "DELETE FROM customers;"
-
     SqlRunner.run(sql)
-
   end
 
+  def self.all()
+    sql = "
+    SELECT * FROM customers;
+    "
+    # binding.pry
+    results = SqlRunner.run(sql)
+# binding.pry
+    customer_objects = results.map do |result|
+      Customer.new(result)
+      # binding.pry
+    end
+    return customer_objects
+
+  end
 
 end

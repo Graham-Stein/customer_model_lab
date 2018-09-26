@@ -25,15 +25,19 @@ order2.save()
 # order1.quantity = 1000
 # order1.update()
 
-orders = PizzaOrder.all()
-
-
 customer1 = Customer.new({
   "first_name" => "Jen",
   "last_name" => "Smith"
   })
 
 customer1.save
+
+orders = PizzaOrder.all()
+
+customers = Customer.all()
+
+
+
 
 binding.pry
 nil
