@@ -2,15 +2,27 @@ require('pg')
 require_relative('../db/sql_runner.rb')
 class PizzaOrder
 
-  attr_accessor(:first_name, :last_name, :topping, :quantity)
-  attr_reader(:id)
+  attr_accessor(:topping, :quantity)
+  attr_reader(:id, :customer_id)
 
   def initialize(options)
     @id = options['id'].to_i()
-    @first_name = options['first_name']
-    @last_name = options['last_name']
+    @customer_id = options['customer_id'].to_i()
     @topping = options['topping']
     @quantity = options['quantity'].to_i()
+  end
+
+  def customer()
+    # we have @customer_id
+    sql "
+    SELECT * FROM customers
+    WHERE id = $1;
+    "
+    results = SqlRunner.run(sql, [@customer_id])
+    customer_hash = results[0]
+    customer = Customer.new(customer_hash)
+    return customer
+    # return a customer object
   end
 
   def self.delete_all()
@@ -38,45 +50,25 @@ class PizzaOrder
   end
 
   def save()
-    # db = PG.connect({
-    #   dbname: 'pizza_shop',
-    #   host: 'localhost'
-    # })
-
     sql = "
       INSERT INTO pizza_orders (
-        first_name,
-        last_name,
+        customer_id,
         quantity,
         topping
       )
-      VALUES ($1, $2, $3, $4)
+      VALUES ($1, $2, $3)
       RETURNING id;
     "
-    # db.prepare('save', sql)
-
     values = [
-      @first_name,
-      @last_name,
+      @customer_id,
       @quantity,
       @topping
     ]
     result = SqlRunner.run(sql, values)
-    # result = db.exec_prepared('save', [
-    #   @first_name,
-    #   @last_name,
-    #   @quantity,
-    #   @topping
-    # ])
-    # db.close()
-
     result_hash = result[0]
     string_id = result_hash['id']
     id = string_id.to_i()
     @id = id
-    # OR
-    # @id = result[0]['id'].to_i()
-
   end
 
   def update()
@@ -84,7 +76,6 @@ class PizzaOrder
       dbname: 'pizza_shop',
       host: 'localhost'
     })
-
     sql = "
       UPDATE pizza_orders
       SET (

@@ -13,6 +13,24 @@ class Customer
     @last_name = options["last_name"]
   end
 
+  def orders()
+    # we have customer id
+    sql = '
+    SELECT * FROM pizza_orders
+    WHERE customer_id = $1;
+    '
+    results = SqlRunner.run(sql, [@id])
+    
+    orders = results.map do |order_hash|
+      PizzaOrder.new(order_hash)
+    end
+    return orders
+
+
+
+    # we want to return an array of pizza order objects
+  end
+
   def save()
     sql = "
       INSERT INTO customers (
