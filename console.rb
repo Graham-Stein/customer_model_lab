@@ -1,7 +1,9 @@
 require_relative('./models/pizza_order.rb')
+require_relative('./models/customer.rb')
 require('pry')
 
 PizzaOrder.delete_all()
+Customer.delete_all()
 
 order1 = PizzaOrder.new({
   'first_name' => 'Walter',
@@ -24,6 +26,14 @@ order2.save()
 # order1.update()
 
 orders = PizzaOrder.all()
+
+
+customer1 = Customer.new({
+  "first_name" => "Jen",
+  "last_name" => "Smith"
+  })
+
+customer1.save
 
 binding.pry
 nil
